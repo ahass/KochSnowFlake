@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using KochSnowFlake.Algorithm;
 using KochSnowFlake.Commands;
 
 namespace KochSnowFlake.ViewModels
@@ -13,12 +14,18 @@ namespace KochSnowFlake.ViewModels
         private const int StartX = 250;
         private const int StartY = 310;
 
+        private readonly IFractalAlgorithm _algorithm;
+
         private int _iterations;
+        private int _pointCount;
         private PointCollection _points;
 
         public MainWindowViewModel()
         {
             InitPointCollection();
+
+            //Todo: Get from dependency injection
+            _algorithm = new KochSnowFlakeAlgorithm();
 
             StartIteration = new DelegateCommand(ExecuteIteration, o => true);
         }
@@ -26,7 +33,11 @@ namespace KochSnowFlake.ViewModels
         public PointCollection Points
         {
             get => _points;
-            set => SetProperty(ref _points, value);
+            set
+            {
+                SetProperty(ref _points, value);
+                PointCount = _points.Count;
+            }
         }
 
         public ICommand StartIteration { get; set; }
@@ -35,6 +46,12 @@ namespace KochSnowFlake.ViewModels
         {
             get => _iterations;
             set => SetProperty(ref _iterations, value);
+        }
+
+        public int PointCount
+        {
+            get => _pointCount;
+            set => SetProperty(ref _pointCount, value);
         }
 
         private void InitPointCollection()
@@ -52,41 +69,11 @@ namespace KochSnowFlake.ViewModels
         {
             InitPointCollection();
 
-            var pointCollection = new PointCollection();
+            var outputPointCollection = new PointCollection {Points[0]};
 
-            DoRecursive(pointCollection, Iterations, Points[0].X, Points[0].Y, Points[1].X, Points[1].Y);
+            _algorithm.DoRecursive(outputPointCollection, Iterations, Points);
 
-            DoRecursive(pointCollection, Iterations, Points[1].X, Points[1].Y, Points[2].X, Points[2].Y);
-
-            DoRecursive(pointCollection, Iterations, Points[2].X, Points[2].Y, Points[3].X, Points[3].Y);
-
-            Points = new PointCollection(pointCollection);
-        }
-
-
-        private static void DoRecursive(PointCollection pointCollection, int iteration,
-            double x12,
-            double y12,
-            double x22,
-            double y22)
-        {
-            var dx = (x22 - x12) / 3;
-            var dy = (y22 - y12) / 3;
-            var xx = x12 + 3 * dx / 2 - dy * Math.Sin(Math.PI / 3);
-            var yy = y12 + 3 * dy / 2 + dx * Math.Sin(Math.PI / 3);
-
-            if (iteration <= 0)
-            {
-                pointCollection.Add(new Point(x12, y12));
-                pointCollection.Add(new Point(x22, y22));
-            }
-            else
-            {
-                DoRecursive(pointCollection, iteration - 1, x12, y12, x12 + dx, y12 + dy);
-                DoRecursive(pointCollection, iteration - 1, x12 + dx, y12 + dy, xx, yy);
-                DoRecursive(pointCollection, iteration - 1, xx, yy, x22 - dx, y22 - dy);
-                DoRecursive(pointCollection, iteration - 1, x22 - dx, y22 - dy, x22, y22);
-            }
+            Points = new PointCollection(outputPointCollection);
         }
     }
 }

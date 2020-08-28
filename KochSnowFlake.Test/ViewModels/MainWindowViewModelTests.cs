@@ -32,7 +32,7 @@ namespace KochSnowFlake.Test.ViewModels
 
 
             // Assert
-            Assert.AreEqual(24, viewModel.Points.Count); //24 Points = 12 Lines
+            Assert.AreEqual(13, viewModel.Points.Count);
             Assert.AreEqual(1, viewModel.Iterations);
         }
 
@@ -50,7 +50,7 @@ namespace KochSnowFlake.Test.ViewModels
 
 
             // Assert
-            Assert.AreEqual(96, viewModel.Points.Count); //24 Points = 12 Lines
+            Assert.AreEqual(49, viewModel.Points.Count);
             Assert.AreEqual(2, viewModel.Iterations);
         }
     }

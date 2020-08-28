@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -40,5 +41,9 @@
             </ScrollViewer>
 
         </Border>
+        <StatusBar Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Height="35">
+            <Label>Points:</Label>
+            <TextBlock Text="{Binding PointCount}"></TextBlock>
+        </StatusBar>
     </Grid>
 </Window>
